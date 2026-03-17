@@ -1,0 +1,1918 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PJINT</title>
+  <link rel="icon" type="image/svg+xml" href="/static/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Share+Tech+Mono&family=Press+Start+2P&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Dracula dark (défaut) ──────────────────────────────────── */
+    :root {
+      --bg:            #282a36;
+      --bg2:           #21222c;
+      --bg3:           #191a24;
+      --border:        rgba(98,114,164,0.35);
+      --border-hi:     rgba(98,114,164,0.6);
+      --green:         #50fa7b;
+      --green-dim:     #3cc963;
+      --green-glow:    rgba(80,250,123,0.22);
+      --red:           #ff5555;
+      --red-dim:       #cc4444;
+      --red-glow:      rgba(255,85,85,0.15);
+      --pink:          #ff79c6;
+      --purple:        #bd93f9;
+      --cyan:          #8be9fd;
+      --orange:        #ffb86c;
+      --grey:          #6272a4;
+      --grey-light:    #8892b0;
+      --text:          #f8f8f2;
+      --text-dim:      #6272a4;
+      --accent:        #ff79c6;
+      --accent2:       #bd93f9;
+      --accent-glow:   rgba(255,121,198,0.22);
+      --search-accent: #50fa7b;
+      --search-glow:   rgba(80,250,123,0.22);
+      --card-glow:     rgba(80,250,123,0.06);
+      --scanline:      rgba(0,0,0,0.08);
+      --font-head:     'Orbitron', sans-serif;
+      --font-mono:     'Share Tech Mono', 'Courier New', monospace;
+      --row-hover:     rgba(98,114,164,0.12);
+      --th-bg:         #191a24;
+    }
+
+    /* ── Thème clair (warm/mrw3st) ──────────────────────────────── */
+    [data-theme="light"] {
+      --bg:            #fdf5e8;
+      --bg2:           #fffbf2;
+      --bg3:           #f0e8d8;
+      --border:        rgba(196,85,0,0.2);
+      --border-hi:     rgba(196,85,0,0.4);
+      --green:         #2a7d3f;
+      --green-dim:     #1e5c2e;
+      --green-glow:    rgba(42,125,63,0.18);
+      --red:           #c62828;
+      --red-dim:       #a71818;
+      --red-glow:      rgba(198,40,40,0.1);
+      --pink:          #c45500;
+      --purple:        #7b62d4;
+      --cyan:          #1a5c8a;
+      --orange:        #c45500;
+      --grey:          #a09080;
+      --grey-light:    #7a6a5a;
+      --text:          #2c2010;
+      --text-dim:      #8a7060;
+      --accent:        #c45500;
+      --accent2:       #1a5c8a;
+      --accent-glow:   rgba(196,85,0,0.18);
+      --search-accent: #c45500;
+      --search-glow:   rgba(196,85,0,0.18);
+      --card-glow:     rgba(196,85,0,0.05);
+      --scanline:      rgba(0,0,0,0.02);
+      --row-hover:     rgba(196,85,0,0.07);
+      --th-bg:         #f0e8d8;
+    }
+
+    /* ── Reset & base ───────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      scroll-behavior: smooth;
+      transition: background 0.35s cubic-bezier(.4,0,.2,1),
+                  color      0.35s cubic-bezier(.4,0,.2,1);
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 13px;
+      min-height: 100vh;
+      overflow-x: hidden;
+      transition: background 0.35s cubic-bezier(.4,0,.2,1),
+                  color      0.35s cubic-bezier(.4,0,.2,1);
+    }
+
+    /* ── Scanlines ──────────────────────────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent, transparent 2px,
+        var(--scanline) 2px, var(--scanline) 4px
+      );
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ── Brand banner ───────────────────────────────────────────── */
+    .brand-banner {
+      background: #12111a;
+      border-bottom: 1px solid rgba(255,121,198,.25);
+      padding: 22px 16px;
+      text-align: center;
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      overflow: hidden;
+    }
+    .brand-banner::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,121,198,.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,121,198,.06) 1px, transparent 1px);
+      background-size: 28px 28px;
+      pointer-events: none;
+    }
+    [data-theme="light"] .brand-banner { background: #1e0d26; }
+    .brand-name {
+      font-family: 'Press Start 2P', monospace;
+      font-size: clamp(1.4rem, 4vw, 2.4rem);
+      color: #ff00aa;
+      letter-spacing: .18em;
+      text-shadow:
+        0 0 4px #fff,
+        0 0 10px #ff00aa,
+        0 0 25px #ff00aa,
+        0 0 55px #ff00aa,
+        0 0 100px rgba(255,0,170,.6);
+      display: block;
+      position: relative;
+      animation: flicker 8s infinite;
+    }
+    .brand-sub {
+      font-family: 'Press Start 2P', monospace;
+      font-size: clamp(.45rem, 1.2vw, .6rem);
+      color: rgba(255,0,170,.5);
+      letter-spacing: .55em;
+      text-transform: uppercase;
+      display: block;
+      margin-top: 6px;
+      position: relative;
+    }
+    @keyframes flicker {
+      0%,95%,100% { opacity: 1; }
+      96%          { opacity: .85; }
+      97%          { opacity: 1; }
+      98%          { opacity: .7; }
+      99%          { opacity: 1; }
+    }
+    /* ── Hamburger ──────────────────────────────────────────────── */
+    .hamburger {
+      position: absolute;
+      left: 1.1rem; top: 50%;
+      transform: translateY(-50%);
+      background: transparent;
+      border: 1px solid rgba(255,121,198,.3);
+      color: rgba(255,121,198,.7);
+      font-size: 18px;
+      width: 36px; height: 36px;
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all .2s;
+      z-index: 110;
+      line-height: 1;
+    }
+    .hamburger:hover { color: #ff79c6; border-color: #ff79c6; background: rgba(255,121,198,.08); }
+
+    /* ── Sidebar ────────────────────────────────────────────────── */
+    .sidebar {
+      position: fixed;
+      top: 82px; left: 0; bottom: 0;
+      width: 200px;
+      background: var(--bg2);
+      border-right: 1px solid var(--border);
+      z-index: 90;
+      display: flex;
+      flex-direction: column;
+      padding: 1.25rem 1rem;
+      overflow-y: auto;
+      transition: transform .3s cubic-bezier(.4,0,.2,1), background .35s, border-color .35s;
+    }
+    .sidebar.collapsed { transform: translateX(-200px); }
+    .container { transition: margin-left .3s cubic-bezier(.4,0,.2,1); }
+
+    .sidebar-brand-name {
+      font-family: var(--font-head);
+      font-size: 1.1rem;
+      color: var(--accent);
+      letter-spacing: .18em;
+    }
+    .sidebar-brand-sub {
+      color: var(--text-dim);
+      font-size: 10px;
+      margin-top: 3px;
+    }
+    .sidebar-version {
+      color: var(--grey);
+      font-size: 9px;
+      margin-top: 2px;
+    }
+    .sidebar hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: .85rem 0;
+    }
+    .sidebar-spacer { flex: 1; }
+
+    /* Sidebar theme toggle — same style as LUCKINT */
+    .sidebar-theme-toggle {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.4rem 0.75rem;
+      border-radius: 0.5rem;
+      background: var(--bg3);
+      color: var(--text-dim);
+      cursor: pointer;
+      border: 1px solid var(--border);
+      font-size: 0.8rem;
+      font-family: var(--font-mono);
+      transition: all 0.15s;
+      width: 100%;
+      justify-content: center;
+      margin-bottom: .5rem;
+    }
+    .sidebar-theme-toggle:hover {
+      color: var(--text);
+      border-color: var(--accent);
+    }
+
+    /* Sidebar quit button */
+    .sidebar-quit-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.4rem 0.75rem;
+      border-radius: 0.5rem;
+      background: transparent;
+      color: var(--red);
+      cursor: pointer;
+      border: 1px solid rgba(255,85,85,0.3);
+      font-size: 0.8rem;
+      font-family: var(--font-mono);
+      transition: all 0.15s;
+      width: 100%;
+      justify-content: center;
+    }
+    .sidebar-quit-btn:hover {
+      background: var(--red-glow);
+      border-color: var(--red);
+    }
+
+    /* ── Historique sidebar ─────────────────────────────────────── */
+    .sidebar-hist-title {
+      font-size: 9px;
+      letter-spacing: .15em;
+      color: var(--text-dim);
+      margin-bottom: .5rem;
+    }
+    #history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      overflow-y: auto;
+      max-height: 340px;
+    }
+    .hist-item {
+      cursor: pointer;
+      padding: 5px 8px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-dim);
+      transition: color .12s, border-color .12s, background .12s;
+    }
+    .hist-item:hover {
+      color: var(--cyan);
+      border-color: var(--cyan);
+      background: rgba(139,233,253,0.06);
+    }
+    .hist-item-main { color: var(--text); font-size: 12px; }
+    .hist-item-meta { color: var(--text-dim); font-size: 10px; margin-top: 1px; }
+
+    /* ── Container ──────────────────────────────────────────────── */
+    .container {
+      max-width: 1260px;
+      margin: 82px auto 0;
+      padding: 2.5rem 1.5rem 4rem;
+    }
+
+    /* ── ASCII header ───────────────────────────────────────────── */
+    .ascii-header {
+      display: table;
+      margin: 0 auto .5rem;
+      text-align: left;
+      font-family: var(--font-mono);
+      font-size: clamp(6px, 1.5vw, 13px);
+      line-height: 1.2;
+      color: var(--search-accent);
+      text-shadow: 0 0 8px var(--search-glow);
+      white-space: pre;
+    }
+    .header-title {
+      font-family: var(--font-head);
+      font-size: clamp(10px, 2vw, 16px);
+      color: var(--accent);
+      letter-spacing: .18em;
+      text-align: center;
+      margin-bottom: .35rem;
+      text-shadow: 0 0 8px var(--accent-glow);
+    }
+    .header-sub {
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 11px;
+      letter-spacing: .12em;
+      margin-bottom: .3rem;
+    }
+    .header-version {
+      text-align: center;
+      color: var(--grey);
+      font-size: 10px;
+      margin-bottom: 2rem;
+    }
+
+    /* ── Search form ────────────────────────────────────────────── */
+    .search-box {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1.25rem;
+      transition: border-color .25s, box-shadow .25s;
+    }
+    .search-box:focus-within {
+      border-color: var(--search-accent);
+      box-shadow: 0 0 0 2px var(--search-glow);
+    }
+    .search-prompt {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      flex-wrap: wrap;
+    }
+    .prompt-arrow {
+      color: var(--search-accent);
+      font-size: 14px;
+      flex-shrink: 0;
+      text-shadow: 0 0 6px var(--search-glow);
+    }
+    .search-prompt input {
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 14px;
+      flex: 1;
+      min-width: 140px;
+      caret-color: var(--search-accent);
+    }
+    .search-prompt input::placeholder { color: var(--text-dim); }
+    #keyword-input {
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 14px;
+      flex: 1;
+      min-width: 180px;
+      caret-color: var(--search-accent);
+    }
+    #keyword-input::placeholder { color: var(--text-dim); }
+    #cat-combobox {
+      position: relative;
+      flex: 1;
+      min-width: 180px;
+    }
+    #cat-combobox #keyword-input {
+      width: 100%;
+      min-width: unset;
+    }
+    #cat-list {
+      display: none;
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      min-width: 260px;
+      background: var(--bg2);
+      border: 1px solid var(--border-hi);
+      border-radius: 6px;
+      max-height: 220px;
+      overflow-y: auto;
+      z-index: 100;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+    }
+    #cat-list.open { display: flex; flex-direction: column; }
+    .cat-item {
+      cursor: pointer;
+      padding: 6px 12px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--text-dim);
+      transition: color .12s, background .12s;
+      white-space: nowrap;
+    }
+    .cat-item:hover {
+      color: var(--search-accent);
+      background: var(--green-glow);
+    }
+    .cat-item.cat-group {
+      color: var(--purple);
+    }
+    .cat-item.cat-group:hover {
+      color: var(--purple);
+      background: rgba(189,147,249,0.1);
+    }
+    .cat-item.hidden { display: none; }
+    .input-sep {
+      color: var(--border-hi);
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .btn-run {
+      background: transparent;
+      border: 1px solid var(--search-accent);
+      color: var(--search-accent);
+      font-family: var(--font-mono);
+      font-size: 13px;
+      padding: .45rem 1.1rem;
+      cursor: pointer;
+      border-radius: 3px;
+      letter-spacing: .08em;
+      transition: all .2s;
+      white-space: nowrap;
+      flex-shrink: 0;
+      text-shadow: 0 0 6px var(--search-glow);
+    }
+    .btn-run:hover:not(:disabled) {
+      background: var(--search-glow);
+      box-shadow: 0 0 10px var(--search-glow);
+    }
+    .btn-run:disabled { opacity: .4; cursor: not-allowed; }
+
+    .btn-pause {
+      background: transparent;
+      border: 1px solid var(--orange);
+      color: var(--orange);
+      font-family: var(--font-mono);
+      font-size: 13px;
+      padding: .45rem 1.1rem;
+      cursor: pointer;
+      border-radius: 3px;
+      letter-spacing: .08em;
+      transition: all .2s;
+      white-space: nowrap;
+    }
+    .btn-pause:hover { background: rgba(255,184,108,0.12); }
+    .btn-stop {
+      background: transparent;
+      border: 1px solid var(--red);
+      color: var(--red);
+      font-family: var(--font-mono);
+      font-size: 13px;
+      padding: .45rem 1.1rem;
+      cursor: pointer;
+      border-radius: 3px;
+      letter-spacing: .08em;
+      transition: all .2s;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .btn-stop:hover {
+      background: var(--red-glow);
+      box-shadow: 0 0 10px var(--red-glow);
+    }
+
+    /* ── Stats bar ──────────────────────────────────────────────── */
+    #stats-bar {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      padding: .75rem 1rem;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      margin-bottom: .75rem;
+      transition: background .35s, border-color .35s;
+    }
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+    }
+    .stat-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .stat-dot.green  { background: var(--green);  box-shadow: 0 0 5px var(--green-glow); }
+    .stat-dot.orange { background: var(--orange); }
+    .stat-dot.red    { background: var(--red);    box-shadow: 0 0 5px var(--red-glow); }
+    .stat-val  { color: var(--text); font-size: 15px; }
+    .stat-lbl  { color: var(--text-dim); font-size: 10px; letter-spacing: .08em; }
+    .stats-sep { color: var(--border-hi); }
+
+    .export-btn {
+      margin-left: auto;
+      background: transparent;
+      border: 1px solid var(--purple);
+      color: var(--purple);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      padding: .4rem 1rem;
+      cursor: pointer;
+      border-radius: 3px;
+      letter-spacing: .08em;
+      transition: all .2s;
+      white-space: nowrap;
+    }
+    .export-btn:hover:not(:disabled) {
+      background: rgba(189,147,249,0.12);
+      box-shadow: 0 0 10px rgba(189,147,249,0.3);
+    }
+    .export-btn:disabled { opacity: .35; cursor: not-allowed; }
+
+    /* ── Barre de progression ───────────────────────────────────── */
+    #progress-wrap {
+      height: 3px;
+      background: var(--bg3);
+      border-radius: 2px;
+      margin-bottom: .75rem;
+      overflow: hidden;
+    }
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--search-accent), var(--purple));
+      border-radius: 2px;
+      transition: width .4s ease;
+      box-shadow: 0 0 8px var(--search-glow);
+    }
+
+    /* ── Message de statut ──────────────────────────────────────── */
+    #status-msg {
+      min-height: 22px;
+      color: var(--text-dim);
+      font-size: 11px;
+      letter-spacing: .06em;
+      margin-bottom: .75rem;
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      flex-wrap: wrap;
+    }
+    #timer-info {
+      display: none;
+      align-items: center;
+      gap: .4rem;
+      margin-left: auto;
+      white-space: nowrap;
+    }
+    #timer-display { color: var(--cyan); font-family: var(--font-mono); font-size: 13px; }
+    #scrape-status-box {
+      display: flex;
+      align-items: baseline;
+      gap: .6rem;
+      margin-top: .75rem;
+      padding: .6rem 1rem;
+      background: var(--bg2);
+      border: 1px solid rgba(255,184,108,0.4);
+      border-radius: 6px;
+      border-left: 3px solid var(--orange);
+      animation: pulse-border 1.5s ease-in-out infinite;
+    }
+    @keyframes pulse-border {
+      0%, 100% { border-left-color: var(--orange); }
+      50%       { border-left-color: rgba(255,184,108,0.2); }
+    }
+    .scrape-status-label {
+      font-size: 9px;
+      letter-spacing: .15em;
+      color: var(--orange);
+      flex-shrink: 0;
+    }
+    #scrape-status-val {
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 15px;
+    }
+    #pj-total-line {
+      display: flex;
+      align-items: baseline;
+      gap: .6rem;
+      margin-top: .75rem;
+      padding: .6rem 1rem;
+      background: var(--bg2);
+      border: 1px solid rgba(139,233,253,0.3);
+      border-radius: 6px;
+      border-left: 3px solid var(--cyan);
+    }
+    .pj-total-label {
+      font-size: 9px;
+      letter-spacing: .15em;
+      color: var(--text-dim);
+      flex-shrink: 0;
+    }
+    #pj-total-val {
+      color: var(--cyan);
+      font-family: var(--font-mono);
+      font-size: 18px;
+      font-weight: bold;
+    }
+    #status-msg.running { color: var(--cyan); }
+    #status-msg.done    { color: var(--green); }
+    #status-msg.error   { color: var(--red); }
+    #status-msg.warn    { color: var(--orange); }
+    .blink { animation: blink-anim 1s step-end infinite; }
+    @keyframes blink-anim { 50% { opacity: 0; } }
+
+    /* ── Tableau des résultats ──────────────────────────────────── */
+    #results-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--bg2);
+      transition: background .35s, border-color .35s;
+    }
+    #results-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    #results-table thead th {
+      background: var(--th-bg);
+      color: var(--text-dim);
+      font-family: var(--font-head);
+      font-size: 9px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      padding: .65rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+      user-select: none;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+    #results-table thead th.th-num { width: 48px; text-align: right; }
+    #results-table tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background .15s;
+    }
+    #results-table tbody tr:last-child { border-bottom: none; }
+    #results-table tbody tr:hover { background: var(--row-hover); }
+    #results-table tbody td {
+      padding: .55rem 1rem;
+      vertical-align: top;
+      font-size: 12.5px;
+    }
+    .td-num {
+      color: var(--text-dim);
+      font-size: 11px;
+      text-align: right;
+      user-select: none;
+    }
+    .td-name {
+      color: var(--text);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .td-phone {
+      color: var(--cyan);
+      white-space: nowrap;
+      font-family: var(--font-mono);
+    }
+    .td-address { color: var(--text-dim); }
+    .td-cat {
+      color: var(--purple);
+      font-size: 11px;
+      white-space: nowrap;
+    }
+    .td-empty {
+      color: var(--border-hi);
+      font-size: 11px;
+      font-style: italic;
+    }
+
+    /* ── Message vide / placeholder ─────────────────────────────── */
+    #empty-state {
+      padding: 3rem 1rem;
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 12px;
+      letter-spacing: .08em;
+    }
+    #empty-state .empty-icon { font-size: 2rem; margin-bottom: .75rem; opacity: .4; }
+
+    /* ── Modal d'export ─────────────────────────────────────────── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.65);
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(3px);
+      animation: modal-in .15s ease;
+    }
+    @keyframes modal-in {
+      from { opacity: 0; transform: scale(.95); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+    .modal-box {
+      background: var(--bg2);
+      border: 1px solid var(--border-hi);
+      border-radius: 8px;
+      padding: 2rem;
+      width: 420px;
+      max-width: 95vw;
+      box-shadow: 0 20px 60px rgba(0,0,0,.5);
+    }
+    .modal-title {
+      font-family: var(--font-head);
+      font-size: 12px;
+      color: var(--purple);
+      letter-spacing: .18em;
+      margin-bottom: 1.5rem;
+      text-shadow: 0 0 8px rgba(189,147,249,.3);
+    }
+    .modal-section { margin-bottom: 1.25rem; }
+    .modal-label {
+      font-family: var(--font-head);
+      font-size: 8px;
+      color: var(--text-dim);
+      letter-spacing: .14em;
+      margin-bottom: .65rem;
+    }
+    .field-checks {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .5rem .75rem;
+    }
+    .field-checks label {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--text);
+      padding: .35rem .5rem;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      transition: border-color .15s, background .15s;
+    }
+    .field-checks label:hover { border-color: var(--border-hi); background: var(--bg3); }
+    .field-checks input[type="checkbox"] { accent-color: var(--purple); width: 14px; height: 14px; }
+    .format-btns {
+      display: flex;
+      gap: .5rem;
+    }
+    .fmt-btn {
+      flex: 1;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      padding: .5rem;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all .15s;
+      letter-spacing: .04em;
+    }
+    .fmt-btn:hover { border-color: var(--border-hi); color: var(--text); }
+    .fmt-btn.active {
+      border-color: var(--purple);
+      color: var(--purple);
+      background: rgba(189,147,249,.1);
+      box-shadow: 0 0 8px rgba(189,147,249,.2);
+    }
+    .modal-actions {
+      display: flex;
+      gap: .75rem;
+      margin-top: 1.5rem;
+    }
+    .btn-do-export {
+      flex: 1;
+      background: var(--purple);
+      border: none;
+      color: #1a1a2e;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 700;
+      padding: .65rem;
+      cursor: pointer;
+      border-radius: 4px;
+      letter-spacing: .08em;
+      transition: filter .2s, box-shadow .2s;
+    }
+    .btn-do-export:hover { filter: brightness(1.15); box-shadow: 0 0 12px rgba(189,147,249,.4); }
+    .btn-close-modal {
+      background: transparent;
+      border: 1px solid var(--border-hi);
+      color: var(--text-dim);
+      font-family: var(--font-mono);
+      font-size: 13px;
+      padding: .65rem 1rem;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all .15s;
+    }
+    .btn-close-modal:hover { border-color: var(--red); color: var(--red); }
+
+    /* ── Toast ──────────────────────────────────────────────────── */
+    #toast {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      z-index: 11000;
+      display: flex;
+      flex-direction: column;
+      gap: .5rem;
+      pointer-events: none;
+    }
+    .toast-item {
+      background: var(--bg2);
+      border: 1px solid var(--border-hi);
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      padding: .65rem 1rem;
+      border-radius: 5px;
+      box-shadow: 0 4px 20px rgba(0,0,0,.4);
+      animation: toast-in .2s ease;
+      max-width: 320px;
+    }
+    .toast-item.success { border-color: var(--green); color: var(--green); }
+    .toast-item.error   { border-color: var(--red);   color: var(--red);   }
+    .toast-item.warn    { border-color: var(--orange); color: var(--orange); }
+    @keyframes toast-in {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Footer ─────────────────────────────────────────────────── */
+    .footer {
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 10px;
+      letter-spacing: .1em;
+      border-top: 1px solid var(--border);
+      margin-top: 3rem;
+      padding-top: 1rem;
+      transition: color .35s, border-color .35s;
+    }
+
+    /* ── Pagination ─────────────────────────────────────────────── */
+    #pagination {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      justify-content: center;
+      padding: .75rem 1rem;
+      margin-top: .5rem;
+    }
+    #pagination button {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      padding: .4rem .9rem;
+      cursor: pointer;
+      border-radius: 3px;
+      letter-spacing: .05em;
+      transition: all .15s;
+    }
+    #pagination button:hover:not(:disabled) {
+      border-color: var(--search-accent);
+      color: var(--search-accent);
+      box-shadow: 0 0 8px var(--search-glow);
+    }
+    #pagination button:disabled {
+      opacity: .3;
+      cursor: not-allowed;
+    }
+    #pg-info {
+      color: var(--text-dim);
+      font-size: 11px;
+      letter-spacing: .06em;
+      min-width: 80px;
+      text-align: center;
+    }
+
+    /* ── Responsive ─────────────────────────────────────────────── */
+    @media (max-width: 640px) {
+      .ascii-header { font-size: 6px; }
+      .container { padding: 1rem 1rem 3rem; }
+      .search-prompt { flex-direction: column; align-items: flex-start; }
+      .search-prompt input { width: 100%; }
+      .btn-run, .btn-stop { width: 100%; text-align: center; }
+      #stats-bar { gap: .75rem; }
+      .export-btn { margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Brand banner (fixed top, full width) -->
+<div class="brand-banner">
+  <button class="hamburger" id="hamburger-btn" title="Menu">&#9776;</button>
+  <span class="brand-name">MrW3ST</span>
+  <span class="brand-sub">Tools</span>
+</div>
+
+<!-- Sidebar (fixed left, below banner) -->
+<aside class="sidebar collapsed" id="sidebar">
+  <span class="sidebar-brand-name">PJINT</span>
+  <span class="sidebar-brand-sub">Pages Jaunes Intelligence</span>
+  <span class="sidebar-version">v2.0</span>
+  <hr>
+  <div class="sidebar-hist-title">HISTORIQUE</div>
+  <div id="history-list"></div>
+  <div class="sidebar-spacer"></div>
+  <button class="sidebar-theme-toggle" id="themeToggle" title="Changer de thème">
+    <span id="themeIcon">☀️</span>
+    <span id="themeLabel">Mode clair</span>
+  </button>
+  <button class="sidebar-quit-btn" id="quit-btn">⏹ Quitter</button>
+</aside>
+
+<div class="container sidebar-collapsed" id="main-container">
+
+  <!-- ASCII header -->
+  <pre class="ascii-header">██████╗      ██╗██╗███╗   ██╗████████╗
+██╔══██╗     ██║██║████╗  ██║╚══██╔══╝
+██████╔╝     ██║██║██╔██╗ ██║   ██║
+██╔═══╝ ██   ██║██║██║╚██╗██║   ██║
+██║     ╚█████╔╝██║██║ ╚████║   ██║
+╚═╝      ╚════╝ ╚═╝╚═╝  ╚═══╝   ╚═╝</pre>
+
+  <div class="header-title">// PAGES JAUNES INTELLIGENCE //</div>
+  <div class="header-sub">EXTRACTION D'ENTREPRISES · PAGINATION AUTOMATIQUE · EXPORT MULTI-FORMAT</div>
+  <div class="header-version">v1.0 — usage légal uniquement · données publiques</div>
+
+  <!-- Formulaire de recherche -->
+  <div class="search-box">
+    <form class="search-prompt" id="search-form" autocomplete="off">
+      <span class="prompt-arrow">▶</span>
+      <input
+        id="ville-input"
+        type="text"
+        placeholder="ville (ex: Lyon, Paris 75001…)"
+        maxlength="80"
+        spellcheck="false"
+        autocomplete="off"
+        autofocus
+      />
+      <span class="input-sep">·</span>
+      <div id="cat-combobox">
+        <input id="keyword-input" type="text"
+               placeholder="catégorie (ex: plombier, restaurant…)"
+               maxlength="80" spellcheck="false" autocomplete="off" />
+        <div id="cat-list">
+      <span class="cat-item cat-group" data-val="★ TOUT INCLURE">★ TOUT INCLURE</span>
+      <span class="cat-item cat-group" data-val="Toute la Restauration">Toute la Restauration</span>
+      <span class="cat-item cat-group" data-val="Toute l'Alimentation">Toute l'Alimentation</span>
+      <span class="cat-item cat-group" data-val="Tous les Médecins">Tous les Médecins</span>
+      <span class="cat-item cat-group" data-val="Tous les Paramédicaux">Tous les Paramédicaux</span>
+      <span class="cat-item cat-group" data-val="Tous les Établissements de santé">Tous les Établissements de santé</span>
+      <span class="cat-item cat-group" data-val="Toute la Beauté">Toute la Beauté</span>
+      <span class="cat-item cat-group" data-val="Tout le Sport">Tout le Sport</span>
+      <span class="cat-item cat-group" data-val="Toute l'Hôtellerie">Toute l'Hôtellerie</span>
+      <span class="cat-item cat-group" data-val="Toute l'Éducation">Toute l'Éducation</span>
+      <span class="cat-item cat-group" data-val="Tout l'Informatique">Tout l'Informatique</span>
+      <span class="cat-item cat-group" data-val="Tous les Artisans & BTP">Tous les Artisans & BTP</span>
+      <span class="cat-item cat-group" data-val="Tout l'Automobile">Tout l'Automobile</span>
+      <span class="cat-item cat-group" data-val="Tout le Commerce">Tout le Commerce</span>
+      <span class="cat-item cat-group" data-val="Tous les Services à la personne">Tous les Services à la personne</span>
+      <span class="cat-item cat-group" data-val="Toutes les Prof. libérales">Toutes les Prof. libérales</span>
+      <span class="cat-item cat-group" data-val="Tout l'Immobilier">Tout l'Immobilier</span>
+      <span class="cat-item cat-group" data-val="Tout le Transport">Tout le Transport</span>
+      <span class="cat-item cat-group" data-val="Tout le Funéraire">Tout le Funéraire</span>
+      <span class="cat-item cat-group" data-val="Tout Animaux">Tout Animaux</span>
+      <span class="cat-item cat-group" data-val="Tous les Loisirs">Tous les Loisirs</span>
+      <span class="cat-item" data-val="restaurant">restaurant</span>
+      <span class="cat-item" data-val="brasserie">brasserie</span>
+      <span class="cat-item" data-val="pizzeria">pizzeria</span>
+      <span class="cat-item" data-val="crêperie">crêperie</span>
+      <span class="cat-item" data-val="sandwicherie">sandwicherie</span>
+      <span class="cat-item" data-val="kebab">kebab</span>
+      <span class="cat-item" data-val="sushi">sushi</span>
+      <span class="cat-item" data-val="restaurant chinois">restaurant chinois</span>
+      <span class="cat-item" data-val="restaurant japonais">restaurant japonais</span>
+      <span class="cat-item" data-val="restaurant libanais">restaurant libanais</span>
+      <span class="cat-item" data-val="restaurant indien">restaurant indien</span>
+      <span class="cat-item" data-val="fast-food">fast-food</span>
+      <span class="cat-item" data-val="rôtisserie">rôtisserie</span>
+      <span class="cat-item" data-val="salon de thé">salon de thé</span>
+      <span class="cat-item" data-val="bar">bar</span>
+      <span class="cat-item" data-val="café">café</span>
+      <span class="cat-item" data-val="pub">pub</span>
+      <span class="cat-item" data-val="discothèque">discothèque</span>
+      <span class="cat-item" data-val="boulangerie">boulangerie</span>
+      <span class="cat-item" data-val="pâtisserie">pâtisserie</span>
+      <span class="cat-item" data-val="boucherie">boucherie</span>
+      <span class="cat-item" data-val="charcuterie">charcuterie</span>
+      <span class="cat-item" data-val="poissonnerie">poissonnerie</span>
+      <span class="cat-item" data-val="fromager">fromager</span>
+      <span class="cat-item" data-val="épicerie">épicerie</span>
+      <span class="cat-item" data-val="épicerie fine">épicerie fine</span>
+      <span class="cat-item" data-val="cave à vins">cave à vins</span>
+      <span class="cat-item" data-val="chocolatier">chocolatier</span>
+      <span class="cat-item" data-val="glacier">glacier</span>
+      <span class="cat-item" data-val="traiteur">traiteur</span>
+      <span class="cat-item" data-val="primeur">primeur</span>
+      <span class="cat-item" data-val="bio épicerie">bio épicerie</span>
+      <span class="cat-item" data-val="médecin généraliste">médecin généraliste</span>
+      <span class="cat-item" data-val="dermatologue">dermatologue</span>
+      <span class="cat-item" data-val="cardiologue">cardiologue</span>
+      <span class="cat-item" data-val="gynécologue">gynécologue</span>
+      <span class="cat-item" data-val="pédiatre">pédiatre</span>
+      <span class="cat-item" data-val="radiologue">radiologue</span>
+      <span class="cat-item" data-val="pneumologue">pneumologue</span>
+      <span class="cat-item" data-val="gastro-entérologue">gastro-entérologue</span>
+      <span class="cat-item" data-val="neurologue">neurologue</span>
+      <span class="cat-item" data-val="psychiatre">psychiatre</span>
+      <span class="cat-item" data-val="ophtalmologue">ophtalmologue</span>
+      <span class="cat-item" data-val="rhumatologue">rhumatologue</span>
+      <span class="cat-item" data-val="urologue">urologue</span>
+      <span class="cat-item" data-val="endocrinologue">endocrinologue</span>
+      <span class="cat-item" data-val="allergologue">allergologue</span>
+      <span class="cat-item" data-val="gériatre">gériatre</span>
+      <span class="cat-item" data-val="chirurgien">chirurgien</span>
+      <span class="cat-item" data-val="médecin du sport">médecin du sport</span>
+      <span class="cat-item" data-val="sage-femme">sage-femme</span>
+      <span class="cat-item" data-val="dentiste">dentiste</span>
+      <span class="cat-item" data-val="orthodontiste">orthodontiste</span>
+      <span class="cat-item" data-val="pharmacie">pharmacie</span>
+      <span class="cat-item" data-val="kinésithérapeute">kinésithérapeute</span>
+      <span class="cat-item" data-val="infirmier">infirmier</span>
+      <span class="cat-item" data-val="opticien">opticien</span>
+      <span class="cat-item" data-val="audioprothésiste">audioprothésiste</span>
+      <span class="cat-item" data-val="podologue">podologue</span>
+      <span class="cat-item" data-val="ostéopathe">ostéopathe</span>
+      <span class="cat-item" data-val="chiropracteur">chiropracteur</span>
+      <span class="cat-item" data-val="psychologue">psychologue</span>
+      <span class="cat-item" data-val="orthophoniste">orthophoniste</span>
+      <span class="cat-item" data-val="diététicien">diététicien</span>
+      <span class="cat-item" data-val="naturopathe">naturopathe</span>
+      <span class="cat-item" data-val="acupuncteur">acupuncteur</span>
+      <span class="cat-item" data-val="ergothérapeute">ergothérapeute</span>
+      <span class="cat-item" data-val="laboratoire d'analyses médicales">laboratoire d'analyses médicales</span>
+      <span class="cat-item" data-val="centre de radiologie">centre de radiologie</span>
+      <span class="cat-item" data-val="clinique">clinique</span>
+      <span class="cat-item" data-val="hôpital">hôpital</span>
+      <span class="cat-item" data-val="maison de retraite">maison de retraite</span>
+      <span class="cat-item" data-val="EHPAD">EHPAD</span>
+      <span class="cat-item" data-val="centre médical">centre médical</span>
+      <span class="cat-item" data-val="centre de rééducation">centre de rééducation</span>
+      <span class="cat-item" data-val="coiffeur">coiffeur</span>
+      <span class="cat-item" data-val="barbier">barbier</span>
+      <span class="cat-item" data-val="esthéticienne">esthéticienne</span>
+      <span class="cat-item" data-val="institut de beauté">institut de beauté</span>
+      <span class="cat-item" data-val="spa">spa</span>
+      <span class="cat-item" data-val="onglerie">onglerie</span>
+      <span class="cat-item" data-val="tatoueur">tatoueur</span>
+      <span class="cat-item" data-val="piercing">piercing</span>
+      <span class="cat-item" data-val="bronzage">bronzage</span>
+      <span class="cat-item" data-val="massage">massage</span>
+      <span class="cat-item" data-val="hammam">hammam</span>
+      <span class="cat-item" data-val="salle de sport">salle de sport</span>
+      <span class="cat-item" data-val="fitness">fitness</span>
+      <span class="cat-item" data-val="musculation">musculation</span>
+      <span class="cat-item" data-val="piscine">piscine</span>
+      <span class="cat-item" data-val="club de tennis">club de tennis</span>
+      <span class="cat-item" data-val="yoga">yoga</span>
+      <span class="cat-item" data-val="pilates">pilates</span>
+      <span class="cat-item" data-val="danse">danse</span>
+      <span class="cat-item" data-val="arts martiaux">arts martiaux</span>
+      <span class="cat-item" data-val="boxe">boxe</span>
+      <span class="cat-item" data-val="équitation">équitation</span>
+      <span class="cat-item" data-val="golf">golf</span>
+      <span class="cat-item" data-val="escalade">escalade</span>
+      <span class="cat-item" data-val="bowling">bowling</span>
+      <span class="cat-item" data-val="karting">karting</span>
+      <span class="cat-item" data-val="paintball">paintball</span>
+      <span class="cat-item" data-val="laser game">laser game</span>
+      <span class="cat-item" data-val="escape game">escape game</span>
+      <span class="cat-item" data-val="hôtel">hôtel</span>
+      <span class="cat-item" data-val="camping">camping</span>
+      <span class="cat-item" data-val="gîte">gîte</span>
+      <span class="cat-item" data-val="chambre d'hôtes">chambre d'hôtes</span>
+      <span class="cat-item" data-val="auberge de jeunesse">auberge de jeunesse</span>
+      <span class="cat-item" data-val="résidence hôtelière">résidence hôtelière</span>
+      <span class="cat-item" data-val="agence de voyage">agence de voyage</span>
+      <span class="cat-item" data-val="auto-école">auto-école</span>
+      <span class="cat-item" data-val="cours particuliers">cours particuliers</span>
+      <span class="cat-item" data-val="soutien scolaire">soutien scolaire</span>
+      <span class="cat-item" data-val="crèche">crèche</span>
+      <span class="cat-item" data-val="garderie">garderie</span>
+      <span class="cat-item" data-val="école de musique">école de musique</span>
+      <span class="cat-item" data-val="école de danse">école de danse</span>
+      <span class="cat-item" data-val="formation professionnelle">formation professionnelle</span>
+      <span class="cat-item" data-val="cours de langues">cours de langues</span>
+      <span class="cat-item" data-val="centre de formation">centre de formation</span>
+      <span class="cat-item" data-val="réparateur informatique">réparateur informatique</span>
+      <span class="cat-item" data-val="réparateur téléphone">réparateur téléphone</span>
+      <span class="cat-item" data-val="développeur web">développeur web</span>
+      <span class="cat-item" data-val="prestataire informatique">prestataire informatique</span>
+      <span class="cat-item" data-val="vidéosurveillance">vidéosurveillance</span>
+      <span class="cat-item" data-val="imprimerie">imprimerie</span>
+      <span class="cat-item" data-val="photocopie">photocopie</span>
+      <span class="cat-item" data-val="plombier">plombier</span>
+      <span class="cat-item" data-val="électricien">électricien</span>
+      <span class="cat-item" data-val="peintre">peintre</span>
+      <span class="cat-item" data-val="menuisier">menuisier</span>
+      <span class="cat-item" data-val="maçon">maçon</span>
+      <span class="cat-item" data-val="serrurier">serrurier</span>
+      <span class="cat-item" data-val="chauffagiste">chauffagiste</span>
+      <span class="cat-item" data-val="carreleur">carreleur</span>
+      <span class="cat-item" data-val="couvreur">couvreur</span>
+      <span class="cat-item" data-val="déménageur">déménageur</span>
+      <span class="cat-item" data-val="charpentier">charpentier</span>
+      <span class="cat-item" data-val="plaquiste">plaquiste</span>
+      <span class="cat-item" data-val="vitrier">vitrier</span>
+      <span class="cat-item" data-val="ferronnier">ferronnier</span>
+      <span class="cat-item" data-val="climatisation">climatisation</span>
+      <span class="cat-item" data-val="ramoneur">ramoneur</span>
+      <span class="cat-item" data-val="isolation">isolation</span>
+      <span class="cat-item" data-val="façadier">façadier</span>
+      <span class="cat-item" data-val="paysagiste">paysagiste</span>
+      <span class="cat-item" data-val="jardinier">jardinier</span>
+      <span class="cat-item" data-val="pisciniste">pisciniste</span>
+      <span class="cat-item" data-val="antenniste">antenniste</span>
+      <span class="cat-item" data-val="installateur solaire">installateur solaire</span>
+      <span class="cat-item" data-val="ascensoriste">ascensoriste</span>
+      <span class="cat-item" data-val="géomètre">géomètre</span>
+      <span class="cat-item" data-val="garage automobile">garage automobile</span>
+      <span class="cat-item" data-val="carrosserie">carrosserie</span>
+      <span class="cat-item" data-val="contrôle technique">contrôle technique</span>
+      <span class="cat-item" data-val="pneus">pneus</span>
+      <span class="cat-item" data-val="pare-brise">pare-brise</span>
+      <span class="cat-item" data-val="dépannage automobile">dépannage automobile</span>
+      <span class="cat-item" data-val="lavage auto">lavage auto</span>
+      <span class="cat-item" data-val="concessionnaire automobile">concessionnaire automobile</span>
+      <span class="cat-item" data-val="moto">moto</span>
+      <span class="cat-item" data-val="vélo électrique">vélo électrique</span>
+      <span class="cat-item" data-val="fleuriste">fleuriste</span>
+      <span class="cat-item" data-val="bijouterie">bijouterie</span>
+      <span class="cat-item" data-val="horlogerie">horlogerie</span>
+      <span class="cat-item" data-val="librairie">librairie</span>
+      <span class="cat-item" data-val="papeterie">papeterie</span>
+      <span class="cat-item" data-val="parfumerie">parfumerie</span>
+      <span class="cat-item" data-val="vêtements">vêtements</span>
+      <span class="cat-item" data-val="chaussures">chaussures</span>
+      <span class="cat-item" data-val="électroménager">électroménager</span>
+      <span class="cat-item" data-val="meubles">meubles</span>
+      <span class="cat-item" data-val="décoration">décoration</span>
+      <span class="cat-item" data-val="bricolage">bricolage</span>
+      <span class="cat-item" data-val="animalerie">animalerie</span>
+      <span class="cat-item" data-val="jouets">jouets</span>
+      <span class="cat-item" data-val="sport magasin">sport magasin</span>
+      <span class="cat-item" data-val="pressing">pressing</span>
+      <span class="cat-item" data-val="cordonnerie">cordonnerie</span>
+      <span class="cat-item" data-val="retouche vêtements">retouche vêtements</span>
+      <span class="cat-item" data-val="aide à domicile">aide à domicile</span>
+      <span class="cat-item" data-val="garde d'enfants">garde d'enfants</span>
+      <span class="cat-item" data-val="baby-sitter">baby-sitter</span>
+      <span class="cat-item" data-val="femme de ménage">femme de ménage</span>
+      <span class="cat-item" data-val="repassage à domicile">repassage à domicile</span>
+      <span class="cat-item" data-val="auxiliaire de vie">auxiliaire de vie</span>
+      <span class="cat-item" data-val="portage de repas">portage de repas</span>
+      <span class="cat-item" data-val="avocat">avocat</span>
+      <span class="cat-item" data-val="expert-comptable">expert-comptable</span>
+      <span class="cat-item" data-val="notaire">notaire</span>
+      <span class="cat-item" data-val="huissier">huissier</span>
+      <span class="cat-item" data-val="architecte">architecte</span>
+      <span class="cat-item" data-val="agence de communication">agence de communication</span>
+      <span class="cat-item" data-val="traducteur">traducteur</span>
+      <span class="cat-item" data-val="photographe">photographe</span>
+      <span class="cat-item" data-val="graphiste">graphiste</span>
+      <span class="cat-item" data-val="agence de publicité">agence de publicité</span>
+      <span class="cat-item" data-val="conseiller en gestion">conseiller en gestion</span>
+      <span class="cat-item" data-val="recrutement">recrutement</span>
+      <span class="cat-item" data-val="intérim">intérim</span>
+      <span class="cat-item" data-val="agence immobilière">agence immobilière</span>
+      <span class="cat-item" data-val="promoteur immobilier">promoteur immobilier</span>
+      <span class="cat-item" data-val="diagnostiqueur immobilier">diagnostiqueur immobilier</span>
+      <span class="cat-item" data-val="syndic de copropriété">syndic de copropriété</span>
+      <span class="cat-item" data-val="administrateur de biens">administrateur de biens</span>
+      <span class="cat-item" data-val="chasseur immobilier">chasseur immobilier</span>
+      <span class="cat-item" data-val="taxi">taxi</span>
+      <span class="cat-item" data-val="VTC">VTC</span>
+      <span class="cat-item" data-val="ambulance">ambulance</span>
+      <span class="cat-item" data-val="transport scolaire">transport scolaire</span>
+      <span class="cat-item" data-val="location de voiture">location de voiture</span>
+      <span class="cat-item" data-val="location de camion">location de camion</span>
+      <span class="cat-item" data-val="coursier">coursier</span>
+      <span class="cat-item" data-val="livraison">livraison</span>
+      <span class="cat-item" data-val="pompes funèbres">pompes funèbres</span>
+      <span class="cat-item" data-val="marbrerie funéraire">marbrerie funéraire</span>
+      <span class="cat-item" data-val="fleuriste funéraire">fleuriste funéraire</span>
+      <span class="cat-item" data-val="vétérinaire">vétérinaire</span>
+      <span class="cat-item" data-val="toiletteur pour chiens">toiletteur pour chiens</span>
+      <span class="cat-item" data-val="pension pour animaux">pension pour animaux</span>
+      <span class="cat-item" data-val="dressage canin">dressage canin</span>
+      <span class="cat-item" data-val="cinéma">cinéma</span>
+      <span class="cat-item" data-val="théâtre">théâtre</span>
+      <span class="cat-item" data-val="musée">musée</span>
+      <span class="cat-item" data-val="salle de concert">salle de concert</span>
+      <span class="cat-item" data-val="parc d'attractions">parc d'attractions</span>
+      <span class="cat-item" data-val="casino">casino</span>
+      <span class="cat-item" data-val="bibliothèque">bibliothèque</span>
+      <span class="cat-item" data-val="galerie d'art">galerie d'art</span>
+      <span class="cat-item" data-val="ludothèque">ludothèque</span>
+        </div>
+      </div>
+      <button class="btn-run" id="scan-btn" type="submit">[ EXTRAIRE ]</button>
+      <button class="btn-pause" id="pause-btn" type="button" style="display:none">[ PAUSE ]</button>
+      <button class="btn-stop" id="stop-btn" type="button" style="display:none">[ STOP ]</button>
+    </form>
+  </div>
+
+  <!-- Barre de stats -->
+  <div id="stats-bar">
+    <div class="stat-item">
+      <div class="stat-dot orange"></div>
+      <span class="stat-val" id="stat-pages">0</span>
+      <span class="stat-lbl">&nbsp;PAGES</span>
+      <span class="stats-sep">&thinsp;/&thinsp;</span>
+      <span class="stat-val" id="stat-total-pages">?</span>
+    </div>
+    <div class="stat-item">
+      <div class="stat-dot green"></div>
+      <span class="stat-val" id="stat-found">0</span>
+      <span class="stat-lbl">&nbsp;ENTRÉES</span>
+    </div>
+    <div class="stat-item">
+      <div class="stat-dot red"></div>
+      <span class="stat-val" id="stat-errors">0</span>
+      <span class="stat-lbl">&nbsp;ERREURS</span>
+    </div>
+    <button class="export-btn" id="export-btn" disabled>⬇ EXPORTER</button>
+  </div>
+
+  <!-- Progression -->
+  <div id="progress-wrap"><div id="progress-bar"></div></div>
+
+  <!-- Statut -->
+  <div id="status-msg">
+    <span id="status-text">En attente d'une recherche…</span>
+    <span id="timer-info">
+      <span style="color:var(--text-dim);font-size:10px">⏱</span>
+      <span id="timer-display">00:00</span>
+    </span>
+  </div>
+  <div id="scrape-status-box" style="display:none">
+    <span class="scrape-status-label">EN COURS</span>
+    <span id="scrape-status-val"></span>
+  </div>
+  <div id="pj-total-line" style="display:none">
+    <span class="pj-total-label">TOTAL PJ</span>
+    <span id="pj-total-val"></span>
+  </div>
+
+  <!-- Tableau des résultats -->
+  <div id="results-wrap">
+    <div id="empty-state">
+      <div class="empty-icon">🏢</div>
+      <div>Saisissez une ville pour démarrer l'extraction</div>
+    </div>
+    <table id="results-table" style="display:none">
+      <thead>
+        <tr>
+          <th class="th-num">#</th>
+          <th>NOM</th>
+          <th>TÉLÉPHONE</th>
+          <th>ADRESSE</th>
+          <th>CATÉGORIE</th>
+        </tr>
+      </thead>
+      <tbody id="results-body"></tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <div id="pagination" style="display:none">
+    <button id="pg-prev">&#9664; Préc</button>
+    <span id="pg-info">Page 1 / 1</span>
+    <button id="pg-next">Suiv &#9654;</button>
+  </div>
+
+  <div class="footer">
+    PJINT // à des fins légales uniquement // données publiques Pages Jaunes
+  </div>
+</div>
+
+<!-- Modal d'export -->
+<div id="export-modal" class="modal-overlay" style="display:none">
+  <div class="modal-box">
+    <div class="modal-title">⬇ EXPORTER LES RÉSULTATS</div>
+
+    <div class="modal-section">
+      <div class="modal-label">CHAMPS À INCLURE</div>
+      <div class="field-checks">
+        <label><input type="checkbox" id="f-nom"       value="nom"       checked> Nom</label>
+        <label><input type="checkbox" id="f-telephone" value="telephone" checked> Téléphone</label>
+        <label><input type="checkbox" id="f-adresse"   value="adresse"   checked> Adresse</label>
+        <label><input type="checkbox" id="f-categorie" value="categorie" checked> Catégorie</label>
+      </div>
+    </div>
+
+    <div class="modal-section">
+      <div class="modal-label">FORMAT</div>
+      <div class="format-btns" id="format-btns">
+        <button class="fmt-btn active" data-fmt="csv">CSV (Excel)</button>
+        <button class="fmt-btn"        data-fmt="txt">TXT (tabulations)</button>
+        <button class="fmt-btn"        data-fmt="json">JSON</button>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-do-export" id="do-export-btn">⬇ TÉLÉCHARGER</button>
+      <button class="btn-close-modal" id="close-modal-btn">ANNULER</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+  /* ═══════════════════════════════════════════════════════════════
+     THÈME
+  ═══════════════════════════════════════════════════════════════ */
+  const html        = document.documentElement;
+  const themeToggle = document.getElementById('themeToggle');
+  const themeIcon   = document.getElementById('themeIcon');
+  const themeLabel  = document.getElementById('themeLabel');
+
+  function _applyTheme(t) {
+    html.setAttribute('data-theme', t);
+    if (t === 'dark') {
+      themeIcon.textContent  = '☀️';
+      themeLabel.textContent = 'Mode clair';
+    } else {
+      themeIcon.textContent  = '🌙';
+      themeLabel.textContent = 'Mode sombre';
+    }
+  }
+
+  _applyTheme(localStorage.getItem('pjint-theme') || 'dark');
+
+  themeToggle.addEventListener('click', () => {
+    const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    _applyTheme(next);
+    localStorage.setItem('pjint-theme', next);
+  });
+
+  /* ═══════════════════════════════════════════════════════════════
+     ÉTAT
+  ═══════════════════════════════════════════════════════════════ */
+  let allResults   = [];   // tous les résultats collectés
+  let evtSource    = null; // EventSource courant
+  let isRunning    = false;
+  let currentVille = '';
+
+  // Pagination
+  const ROWS_PER_PAGE = 50;
+  let currentPage     = 1;
+
+  // Timer
+  let timerInterval  = null;
+  let scrapeStartTime = null;
+
+
+  // Éléments DOM
+  const scanForm       = document.getElementById('search-form');
+  const villeInput     = document.getElementById('ville-input');
+  const keywordInput   = document.getElementById('keyword-input');
+  const catList        = document.getElementById('cat-list');
+  const catItems       = catList.querySelectorAll('.cat-item');
+  const scanBtn        = document.getElementById('scan-btn');
+  const pauseBtn       = document.getElementById('pause-btn');
+  const stopBtn        = document.getElementById('stop-btn');
+  const exportBtn      = document.getElementById('export-btn');
+  const statPages      = document.getElementById('stat-pages');
+  const statTotalPages = document.getElementById('stat-total-pages');
+  const statFound      = document.getElementById('stat-found');
+  const statErrors          = document.getElementById('stat-errors');
+  const scrapeStatusBox = document.getElementById('scrape-status-box');
+  const scrapeStatusVal = document.getElementById('scrape-status-val');
+  const pjTotalLine     = document.getElementById('pj-total-line');
+  const pjTotalVal  = document.getElementById('pj-total-val');
+  const progressBar    = document.getElementById('progress-bar');
+  const statusMsg      = document.getElementById('status-msg');
+  const statusText     = document.getElementById('status-text');
+  const emptyState     = document.getElementById('empty-state');
+  const resultsTable   = document.getElementById('results-table');
+  const resultsBody    = document.getElementById('results-body');
+  const exportModal    = document.getElementById('export-modal');
+  const doExportBtn    = document.getElementById('do-export-btn');
+  const closeModalBtn  = document.getElementById('close-modal-btn');
+  const formatBtns     = document.querySelectorAll('.fmt-btn');
+  const pgWrap         = document.getElementById('pagination');
+  const pgPrev         = document.getElementById('pg-prev');
+  const pgNext         = document.getElementById('pg-next');
+  const pgInfo         = document.getElementById('pg-info');
+  const timerDisplay   = document.getElementById('timer-display');
+  const timerInfo      = document.getElementById('timer-info');
+  let   selectedFmt    = 'csv';
+
+  /* ═══════════════════════════════════════════════════════════════
+     CATEGORY COMBOBOX
+  ═══════════════════════════════════════════════════════════════ */
+  keywordInput.addEventListener('focus', () => catList.classList.add('open'));
+
+  keywordInput.addEventListener('input', () => {
+    catList.classList.add('open');
+    const q = keywordInput.value.toLowerCase().trim();
+    catItems.forEach(item => {
+      if (!q || item.dataset.val.toLowerCase().includes(q)) {
+        item.classList.remove('hidden');
+      } else {
+        item.classList.add('hidden');
+      }
+    });
+  });
+
+  keywordInput.addEventListener('blur', () => {
+    setTimeout(() => catList.classList.remove('open'), 150);
+  });
+
+  catList.addEventListener('mousedown', e => {
+    const item = e.target.closest('.cat-item');
+    if (item) {
+      e.preventDefault();
+      keywordInput.value = item.dataset.val;
+      catList.classList.remove('open');
+      catItems.forEach(i => i.classList.remove('hidden'));
+    }
+  });
+
+  /* ═══════════════════════════════════════════════════════════════
+     TOAST
+  ═══════════════════════════════════════════════════════════════ */
+  function toast(msg, type = '', duration = 3500) {
+    const wrap = document.getElementById('toast');
+    const el = document.createElement('div');
+    el.className = 'toast-item' + (type ? ' ' + type : '');
+    el.textContent = msg;
+    wrap.appendChild(el);
+    setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity .3s'; }, duration);
+    setTimeout(() => el.remove(), duration + 350);
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     STATUT
+  ═══════════════════════════════════════════════════════════════ */
+  function setStatus(msg, cls = '') {
+    statusMsg.className = cls;
+    const blink = cls === 'running' ? '<span class="blink">_</span>' : '';
+    statusText.innerHTML = msg + blink;
+  }
+
+  function setProgress(page, total) {
+    const pct = total > 0 ? Math.min(100, Math.round((page / total) * 100)) : 0;
+    progressBar.style.width = pct + '%';
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     TIMER
+  ═══════════════════════════════════════════════════════════════ */
+  function _fmtSeconds(secs) {
+    secs = Math.max(0, Math.floor(secs));
+    if (secs >= 3600) {
+      const h = Math.floor(secs / 3600);
+      const m = Math.floor((secs % 3600) / 60);
+      return String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0');
+    }
+    const m = Math.floor(secs / 60);
+    const s = secs % 60;
+    return String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+  }
+
+  function _tickTimer() {
+    if (!scrapeStartTime) return;
+    const elapsed = (Date.now() - scrapeStartTime) / 1000;
+    timerDisplay.textContent = _fmtSeconds(elapsed);
+
+  }
+
+  function startTimer() {
+    scrapeStartTime = Date.now();
+    timerDisplay.textContent = '00:00';
+    timerInfo.style.display  = 'flex';
+    if (timerInterval) clearInterval(timerInterval);
+    timerInterval = setInterval(_tickTimer, 1000);
+  }
+
+  function stopTimer() {
+    if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+  }
+
+  /* ── Hamburger sidebar toggle ───────────────────────────────── */
+  const sidebar       = document.getElementById('sidebar');
+  const container     = document.getElementById('main-container');
+  const hamburgerBtn  = document.getElementById('hamburger-btn');
+  hamburgerBtn.addEventListener('click', () => {
+    sidebar.classList.toggle('collapsed');
+    container.classList.toggle('sidebar-collapsed');
+  });
+
+  /* ═══════════════════════════════════════════════════════════════
+     PAGINATION
+  ═══════════════════════════════════════════════════════════════ */
+  function totalPages() {
+    return Math.max(1, Math.ceil(allResults.length / ROWS_PER_PAGE));
+  }
+
+  function renderCurrentPage() {
+    const tp    = totalPages();
+    const start = (currentPage - 1) * ROWS_PER_PAGE;
+    const end   = currentPage * ROWS_PER_PAGE;
+    const slice = allResults.slice(start, end);
+
+    resultsBody.innerHTML = '';
+    const frag = document.createDocumentFragment();
+    slice.forEach((item, i) => {
+      const tr  = document.createElement('tr');
+      const num = start + i + 1;
+      tr.innerHTML = `
+        <td class="td-num">${num}</td>
+        <td class="td-name">${esc(item.nom) || '<span class="td-empty">—</span>'}</td>
+        <td class="td-phone">${esc(item.telephone) || '<span class="td-empty">—</span>'}</td>
+        <td class="td-address">${esc(item.adresse) || '<span class="td-empty">—</span>'}</td>
+        <td class="td-cat">${esc(item.categorie) || '<span class="td-empty">—</span>'}</td>
+      `;
+      frag.appendChild(tr);
+    });
+    resultsBody.appendChild(frag);
+
+    // Update pagination controls
+    pgInfo.textContent = `Page ${currentPage} / ${tp}`;
+    pgPrev.disabled    = currentPage <= 1;
+    pgNext.disabled    = currentPage >= tp;
+    pgWrap.style.display = allResults.length > ROWS_PER_PAGE ? 'flex' : 'none';
+  }
+
+  pgPrev.addEventListener('click', () => {
+    if (currentPage > 1) { currentPage--; renderCurrentPage(); }
+  });
+
+  pgNext.addEventListener('click', () => {
+    if (currentPage < totalPages()) { currentPage++; renderCurrentPage(); }
+  });
+
+  function esc(str) {
+    if (!str) return '';
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     LANCEMENT DU SCRAPING (SSE)
+  ═══════════════════════════════════════════════════════════════ */
+  scanForm.addEventListener('submit', e => {
+    e.preventDefault();
+    catList.classList.remove('open');
+    keywordInput.blur();
+    const ville   = villeInput.value.trim();
+    const keyword = keywordInput.value.trim();
+    if (!ville)   { toast('Veuillez saisir une ville.', 'warn'); return; }
+    if (!keyword) { toast('Veuillez saisir un mot-clé (ex: restaurant, plombier…)', 'warn'); return; }
+    startScraping(ville, keyword);
+  });
+
+  function startScraping(ville, keyword) {
+    if (isRunning && evtSource) evtSource.close();
+
+    // Vérifie si une pause existe pour cette recherche
+    const paused = loadPauseState();
+    const isResume = paused && paused.ville === ville && paused.keyword === keyword;
+
+    // Réinitialisation
+    allResults   = isResume ? [...paused.results] : [];
+    currentPage  = 1;
+    isRunning    = true;
+    currentVille = ville;
+    scanBtn.disabled       = true;
+    pauseBtn.style.display = 'inline-block';
+    stopBtn.style.display  = 'inline-block';
+    exportBtn.disabled     = true;
+
+    statPages.textContent      = isResume ? paused.page : '0';
+    statTotalPages.textContent = '?';
+    statFound.textContent      = allResults.length || '0';
+    scrapeStatusBox.style.display = 'none';
+    pjTotalLine.style.display     = 'none';
+    pjTotalLine.style.borderLeftColor = 'var(--cyan)';
+    pjTotalLine.style.borderColor     = 'rgba(139,233,253,0.3)';
+    pjTotalVal.style.color            = 'var(--cyan)';
+    document.querySelector('.pj-total-label').textContent = 'TOTAL PJ';
+    statErrors.textContent     = '0';
+    progressBar.style.width    = '0%';
+    resultsBody.innerHTML      = '';
+    emptyState.style.display   = 'none';
+    resultsTable.style.display = 'table';
+    pgWrap.style.display       = 'none';
+
+    if (isResume) {
+      clearPauseState();
+      // Réaffiche les résultats sauvegardés
+      allResults.forEach((item, i) => addRow(item, i + 1));
+      renderPage(currentPage);
+      toast(`▶ Reprise depuis la page ${paused.page} · ${paused.results.length} entrées rechargées`, 'success', 4000);
+    }
+
+    startTimer();
+
+    const startPage = isResume ? paused.page : 1;
+    const params = new URLSearchParams({ ville, keyword, start_page: startPage });
+    evtSource = new EventSource(`/api/scrape?${params}`);
+
+    setStatus(`${isResume ? 'Reprise' : 'Connexion'} · ${ville} · ${keyword}`, 'running');
+
+    evtSource.onmessage = e => {
+      let data;
+      try { data = JSON.parse(e.data); } catch { return; }
+
+      switch (data.type) {
+
+        case 'keyword_start':
+          setStatus(`[${data.kw_index}/${data.kw_total}] ${data.keyword} · ${data.ville}`, 'running');
+          break;
+
+        case 'info':
+          statTotalPages.textContent = data.total_pages;
+          if (data.total_results > 0) {
+            pjTotalVal.textContent    = data.total_results.toLocaleString('fr-FR') + ' entrées';
+            pjTotalLine.style.display = 'block';
+          }
+          scrapeStatusBox.style.display = 'flex';
+          setStatus(`${data.keyword} · ${data.ville}`, 'running');
+          break;
+
+        case 'results': {
+          allResults.push(...data.items);
+          statPages.textContent = data.page;
+          statFound.textContent = data.total_found;
+          setProgress(data.page, data.total_pages);
+          scrapeStatusVal.textContent = `Page ${data.page} / ${data.total_pages}  ·  ${data.total_found.toLocaleString('fr-FR')} entrées`;
+          // Auto-follow: if user is on the last page, re-render so new rows appear
+          if (currentPage >= totalPages() - 1) {
+            currentPage = totalPages();
+            renderCurrentPage();
+          } else {
+            // Just update controls without re-rendering
+            const tp = totalPages();
+            pgInfo.textContent = `Page ${currentPage} / ${tp}`;
+            pgPrev.disabled    = currentPage <= 1;
+            pgNext.disabled    = currentPage >= tp;
+            pgWrap.style.display = allResults.length > ROWS_PER_PAGE ? 'flex' : 'none';
+          }
+          break;
+        }
+
+        case 'warn':
+          statErrors.textContent = parseInt(statErrors.textContent || '0') + 1;
+          toast(data.msg, 'warn');
+          break;
+
+        case 'error':
+          setStatus(data.msg, 'error');
+          toast(data.msg, 'error');
+          finishScraping(false);
+          break;
+
+        case 'done':
+          setProgress(parseInt(statTotalPages.textContent) || 1, parseInt(statTotalPages.textContent) || 1);
+          setStatus(`Extraction terminée`, 'done');
+          toast(`✓ ${data.total.toLocaleString('fr-FR')} entrées extraites`, 'success', 6000);
+          scrapeStatusBox.style.display = 'none';
+          pjTotalLine.style.borderLeftColor = 'var(--green)';
+          pjTotalLine.style.borderColor = 'rgba(80,250,123,0.3)';
+          pjTotalVal.style.color = 'var(--green)';
+          pjTotalVal.textContent = `✓ ${data.total.toLocaleString('fr-FR')} entrées extraites`;
+          document.querySelector('.pj-total-label').textContent = 'TERMINÉ';
+          finishScraping(true);
+          break;
+      }
+    };
+
+    evtSource.onerror = () => {
+      setStatus('Connexion interrompue.', 'error');
+      finishScraping(false);
+    };
+  }
+
+  function finishScraping(success) {
+    if (evtSource) { evtSource.close(); evtSource = null; }
+    isRunning = false;
+    stopTimer();
+    saveToHistory(currentVille, keywordInput.value.trim(), allResults.length);
+    scanBtn.disabled       = false;
+    pauseBtn.style.display = 'none';
+    stopBtn.style.display  = 'none';
+    if (allResults.length > 0) exportBtn.disabled = false;
+    if (allResults.length === 0 && success) {
+      emptyState.style.display   = 'block';
+      resultsTable.style.display = 'none';
+      pgWrap.style.display       = 'none';
+      emptyState.querySelector('.empty-icon').textContent         = '🔍';
+      emptyState.querySelector('div:last-child').textContent      = 'Aucune entreprise trouvée pour cette recherche.';
+    }
+  }
+
+  pauseBtn.addEventListener('click', () => {
+    if (evtSource) evtSource.close();
+    const pausedPage = parseInt(statPages.textContent) || 1;
+    savePauseState(currentVille, keywordInput.value.trim(), pausedPage, allResults);
+    setStatus(`En pause · reprise possible depuis la page ${pausedPage}`, 'warn');
+    toast(`⏸ En pause à la page ${pausedPage} · ${allResults.length} entrées sauvegardées`, 'warn', 5000);
+    finishScraping(false);
+    renderHistory();
+  });
+
+  stopBtn.addEventListener('click', () => {
+    if (evtSource) evtSource.close();
+    clearPauseState();
+    setStatus('Scraping interrompu par l\'utilisateur.', 'warn');
+    toast('Scraping arrêté.', 'warn');
+    finishScraping(false);
+  });
+
+  /* ═══════════════════════════════════════════════════════════════
+     MODAL D'EXPORT
+  ═══════════════════════════════════════════════════════════════ */
+  exportBtn.addEventListener('click', () => {
+    exportModal.style.display = 'flex';
+  });
+
+  closeModalBtn.addEventListener('click', () => {
+    exportModal.style.display = 'none';
+  });
+
+  exportModal.addEventListener('click', e => {
+    if (e.target === exportModal) exportModal.style.display = 'none';
+  });
+
+  // Sélection du format
+  formatBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      formatBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      selectedFmt = btn.dataset.fmt;
+    });
+  });
+
+  /* ═══════════════════════════════════════════════════════════════
+     EXPORT (côté client)
+  ═══════════════════════════════════════════════════════════════ */
+  doExportBtn.addEventListener('click', () => {
+    const fields = ['nom','telephone','adresse','categorie'].filter(f => {
+      const cb = document.getElementById('f-' + f);
+      return cb && cb.checked;
+    });
+
+    if (fields.length === 0) {
+      toast('Sélectionnez au moins un champ.', 'warn');
+      return;
+    }
+    if (allResults.length === 0) {
+      toast('Aucun résultat à exporter.', 'warn');
+      return;
+    }
+
+    const exportData = fields.includes('telephone')
+      ? allResults.filter(item => item.telephone && item.telephone.trim())
+      : allResults;
+
+    const filtered = exportData.map(item => {
+      const row = {};
+      fields.forEach(f => { row[f] = item[f] || ''; });
+      return row;
+    });
+
+    const BOM      = '\uFEFF';
+    const filename = `pjint_${currentVille.replace(/\s+/g,'_')}_${Date.now()}`;
+    let content, mime, ext;
+
+    if (selectedFmt === 'json') {
+      content = JSON.stringify(filtered, null, 2);
+      mime = 'application/json';
+      ext  = 'json';
+
+    } else if (selectedFmt === 'csv') {
+      const header = fields.join(',');
+      const rows   = filtered.map(r =>
+        fields.map(f => '"' + (r[f] || '').replace(/"/g, '""') + '"').join(',')
+      );
+      content = BOM + [header, ...rows].join('\r\n');
+      mime = 'text/csv;charset=utf-8';
+      ext  = 'csv';
+
+    } else {  // txt — tabulations
+      const header = fields.join('\t');
+      const rows   = filtered.map(r => fields.map(f => r[f] || '').join('\t'));
+      content = BOM + [header, ...rows].join('\r\n');
+      mime = 'text/plain;charset=utf-8';
+      ext  = 'txt';
+    }
+
+    const blob = new Blob([content], { type: mime });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = `${filename}.${ext}`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    exportModal.style.display = 'none';
+    toast(`✓ Export ${ext.toUpperCase()} téléchargé · ${filtered.length} lignes`, 'success');
+  });
+
+  /* ═══════════════════════════════════════════════════════════════
+     QUITTER
+  ═══════════════════════════════════════════════════════════════ */
+  /* ═══════════════════════════════════════════════════════════════
+     HISTORIQUE
+  ═══════════════════════════════════════════════════════════════ */
+  const HIST_KEY   = 'pjint_history';
+  const PAUSE_KEY  = 'pjint_pause';
+  const histList   = document.getElementById('history-list');
+
+  function savePauseState(ville, keyword, page, results) {
+    localStorage.setItem(PAUSE_KEY, JSON.stringify({ ville, keyword, page, results }));
+  }
+  function loadPauseState() {
+    try { return JSON.parse(localStorage.getItem(PAUSE_KEY)); } catch { return null; }
+  }
+  function clearPauseState() { localStorage.removeItem(PAUSE_KEY); }
+
+  function loadHistory() {
+    try { return JSON.parse(localStorage.getItem(HIST_KEY) || '[]'); } catch { return []; }
+  }
+
+  function saveToHistory(ville, keyword, count) {
+    const hist = loadHistory().filter(h => !(h.ville === ville && h.keyword === keyword));
+    hist.unshift({ ville, keyword, count, date: new Date().toLocaleDateString('fr-FR') });
+    if (hist.length > 15) hist.length = 15;
+    localStorage.setItem(HIST_KEY, JSON.stringify(hist));
+    renderHistory();
+  }
+
+  function renderHistory() {
+    const hist   = loadHistory();
+    const paused = loadPauseState();
+    histList.innerHTML = '';
+    if (!hist.length) {
+      histList.innerHTML = '<span style="font-size:10px;color:var(--text-dim)">Aucune recherche</span>';
+      return;
+    }
+    hist.forEach(h => {
+      const isPaused = paused && paused.ville === h.ville && paused.keyword === h.keyword;
+      const el = document.createElement('div');
+      el.className = 'hist-item';
+      el.innerHTML = `<div class="hist-item-main">${isPaused ? '⏸ ' : ''}${h.ville} · ${h.keyword}</div>`
+                   + `<div class="hist-item-meta">${isPaused ? `page ${paused.page} · ${paused.results.length} entrées · ` : (h.count > 0 ? h.count + ' entrées · ' : '')}${h.date}</div>`;
+      if (isPaused) el.style.borderColor = 'var(--orange)';
+      el.addEventListener('click', () => {
+        villeInput.value   = h.ville;
+        keywordInput.value = h.keyword;
+        startScraping(h.ville, h.keyword);
+      });
+      histList.appendChild(el);
+    });
+  }
+
+  renderHistory();
+
+  window.addEventListener('beforeunload', e => {
+    if (isRunning) {
+      e.preventDefault();
+      e.returnValue = '';
+    }
+  });
+
+  document.getElementById('quit-btn').addEventListener('click', async () => {
+    try { await fetch('/api/quit'); } catch {}
+    window.close();
+  });
+</script>
+</body>
+</html>

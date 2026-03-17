@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+*.pyo
+pjint_*.txt
+pjint_*.csv
+pjint_*.json
+pjint_*.xlsx
